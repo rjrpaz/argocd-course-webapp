@@ -17,7 +17,8 @@ FROM build AS publish
 RUN dotnet publish "WebApplication1.csproj" -c Release -o /app/publish
 
 FROM base AS final
-RUN echo fs.inotify.max_user_instances=524288 >> /etc/sysctl.conf && sudo sysctl -p
+RUN sysctl -w fs.inotify.max_user_instances=524288
+RUN sysctl -p
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "WebApplication1.dll"]
